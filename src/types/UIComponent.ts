@@ -4,8 +4,8 @@ export type UIComponent = {
   name: string;
   variants: {
     class: string;
-    smallest: number;
-    largest: number;
+    width: [number, number];
+    height: [number, number];
     component: () => { component: ComponentType; props: object };
   }[];
   class: string;

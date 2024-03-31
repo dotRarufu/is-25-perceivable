@@ -2,6 +2,7 @@
   import { components } from "../../data/components";
   import { getRandomInt } from "$lib/utils/math";
   import { goto } from "$app/navigation";
+  import { getRandomComponentWithin } from "$lib/utils/component";
 
   const defaultData = {
     original: null,
@@ -19,13 +20,12 @@
   let componentSize: number | null = null;
   let randomNumberVariant = 0;
   let randomNumberComponent = 0;
+  let innerHeight = 0;
+  let innerWidth = 0;
 
-  // todo: only pick variants that is under viewport size
+  $: randomComponent = getRandomComponentWithin(innerWidth, innerHeight);
 
-  $: variant =
-    components[randomNumberComponent].variants[randomNumberVariant].component();
-
-  $: console.log("variant:", components[randomNumberComponent].name);
+  $: console.log("randomComponent:", randomComponent);
 
   const moveToQuestion = () => {
     if (currentNumber === maxQuestions) {
@@ -37,9 +37,6 @@
     randomNumberVariant = getRandomInt(0, 2);
 
     currentNumber += 1;
-
-    // randomNumberComponent = 1;
-    // variant = {component: };
   };
 
   const answerQuestion = (isChanged: boolean) => () => {
@@ -57,13 +54,17 @@
   };
 </script>
 
+<svelte:window bind:innerHeight bind:innerWidth />
+
 <div class="w-full h-full flex flex-col justify-center items-center">
   <div>
-    <svelte:component
-      this={variant.component}
-      bind:size={componentSize}
-      {...variant.props}
-    />
+    {#if randomComponent}
+      <svelte:component
+        this={randomComponent.component}
+        bind:size={componentSize}
+        {...randomComponent.props}
+      />
+    {/if}
   </div>
 </div>
 

@@ -8,20 +8,20 @@ export const buttonData: UIComponent = {
   variants: [
     {
       class: "xs",
-      largest: 65,
-      smallest: 44,
+      width: [44, 65],
+      height: [24, 24],
       component: () => ({ component: Button, props: { variant: "xs" } }),
     },
     {
       class: "sm",
-      largest: 87,
-      smallest: 66,
+      width: [66, 87],
+      height: [32, 32],
       component: () => ({ component: Button, props: { variant: "sm" } }),
     },
     {
       class: "",
-      largest: 103,
-      smallest: 88,
+      width: [88, 103],
+      height: [48, 48],
       component: () => ({ component: Button, props: { variant: "md" } }),
     },
   ],
@@ -33,20 +33,20 @@ export const inputData: UIComponent = {
   variants: [
     {
       class: "xs",
-      largest: 31,
-      smallest: 24,
+      width: [320, 320],
+      height: [24, 31],
       component: () => ({ component: Input, props: { variant: "xs" } }),
     },
     {
       class: "sm",
-      largest: 32,
-      smallest: 47,
+      height: [32, 47],
+      width: [320, 320],
       component: () => ({ component: Input, props: { variant: "sm" } }),
     },
     {
       class: "md",
-      largest: 48,
-      smallest: 63,
+      height: [48, 63],
+      width: [320, 320],
       component: () => ({ component: Input, props: { variant: "md" } }),
     },
   ],
