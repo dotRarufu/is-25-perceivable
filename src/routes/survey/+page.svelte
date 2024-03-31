@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { components } from "../../data/components";
   import { getRandomInt } from "$lib/utils/math";
   import { goto } from "$app/navigation";
   import { getRandomComponentWithin } from "$lib/utils/component";
@@ -15,41 +14,40 @@
     isCorrect: boolean | null;
   } = defaultData;
   const maxQuestions = 5;
-  let currentNumber = 0;
+  let currentNumber = 1;
   let isMemorizing = true;
   let componentSize: number | null = null;
-  let randomNumberVariant = 0;
-  let randomNumberComponent = 0;
   let innerHeight = 0;
   let innerWidth = 0;
-
-  $: randomComponent = getRandomComponentWithin(innerWidth, innerHeight);
-
-  $: console.log("randomComponent:", randomComponent);
+  let shouldIncrease: boolean | null = null;
+  $: randomIncrease = shouldIncrease ? getRandomInt(1, 100) : null;
+  $: console.log("randomIncrease:", randomIncrease);
+  $: randomComponent = getRandomComponentWithin(
+    innerWidth,
+    innerHeight,
+    currentNumber,
+  );
 
   const moveToQuestion = () => {
-    if (currentNumber === maxQuestions) {
-      goto("/");
-    }
+    if (currentNumber === maxQuestions) goto("/");
 
     isMemorizing = false;
     data = { ...data, original: componentSize };
-    randomNumberVariant = getRandomInt(0, 2);
 
-    currentNumber += 1;
+    shouldIncrease = !!getRandomInt(0, 1);
   };
 
   const answerQuestion = (isChanged: boolean) => () => {
     isMemorizing = true;
     const isSame = componentSize === data.original;
-    randomNumberComponent = getRandomInt(0, 1);
+    // randomNumberComponent = getRandomInt(0, 1);
     data = {
       ...data,
       changed: componentSize,
       isCorrect: isSame === !isChanged,
     };
     console.log("save data:", data);
-
+    currentNumber += 1;
     data = defaultData;
   };
 </script>
@@ -63,6 +61,8 @@
         this={randomComponent.component}
         bind:size={componentSize}
         {...randomComponent.props}
+        {isMemorizing}
+        {randomIncrease}
       />
     {/if}
   </div>
@@ -71,7 +71,7 @@
 <!-- Survey -->
 <div class="w-full gap-[2rem] flex items-center flex-col py-[2rem]">
   <h1 class="text-lg font-bold">
-    {isMemorizing ? "Try to remember this" : "Did it change"}
+    {isMemorizing ? "Try to remember this" : "Did the width  change?"}
   </h1>
 
   <div class="flex gap-[2rem]">
