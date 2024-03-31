@@ -1,20 +1,46 @@
 <script lang="ts">
   type ButtonVariants = "xs" | "sm" | "md";
-  export let variant: ButtonVariants | null = null;
-  export let size: number | null = null;
-  export let randomIncrease: number | null = null;
-  export let isMemorizing: boolean = false;
+
+  export let variant: ButtonVariants;
+  export let randomIncrease: number;
+  export let isMemorizing: boolean;
+  export let dimension: "width" | "height";
+  export let changeSize: (w: number, h: number) => void;
+
+  let clientWidth: number;
+  let clientHeight: number;
 
   let width = "";
+  let height = "";
+
   $: {
-    if (!isMemorizing && size && randomIncrease && !width) {
-      const increase = size * (randomIncrease / 100);
-      const newWidth = size + increase;
+    if (isMemorizing) {
+      width = "";
+      height = "";
+    }
+  }
 
-      // This does not work because w-[...] class is not generated at runtime, only when tailwind compiles
-      // width = `w-[${newWidth}px]`;
+  $: {
+    if (clientHeight && clientWidth) {
+      console.log("update:", clientWidth, clientHeight);
+      changeSize(clientWidth, clientHeight);
+    }
+  }
 
-      width = `${newWidth}px`;
+  $: {
+    if (!isMemorizing && !width && !height) {
+      const size = dimension === "width" ? clientWidth : clientHeight;
+
+      if (size !== null) {
+        const increase = size * (randomIncrease / 100);
+        const newSize = size + increase;
+
+        // This does not work because w-[...] class is not generated at runtime, only when tailwind compiles
+        // width = `w-[${newWidth}px]`;
+
+        width = dimension === "width" ? `${newSize}px` : " ";
+        height = dimension === "height" ? `${newSize}px` : " ";
+      }
     }
   }
 </script>
@@ -24,7 +50,9 @@
   class:btn-xs={variant === "xs"}
   class:btn-sm={variant === "sm"}
   style:width
-  bind:clientWidth={size}
+  style:height
+  bind:offsetWidth={clientWidth}
+  bind:offsetHeight={clientHeight}
 >
   Read more
 </button>

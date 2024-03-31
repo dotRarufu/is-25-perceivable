@@ -2,7 +2,7 @@
   import { getRandomInt } from "$lib/utils/math";
   import { goto } from "$app/navigation";
   import { getRandomComponentWithin } from "$lib/utils/component";
-
+  type Nullable<T> = T | null;
   const defaultData = {
     original: null,
     changed: null,
@@ -16,53 +16,67 @@
   const maxQuestions = 5;
   let currentNumber = 1;
   let isMemorizing = true;
-  let componentSize: number | null = null;
-  let innerHeight = 0;
-  let innerWidth = 0;
-  let shouldIncrease: boolean | null = null;
+  let componentWidth: number;
+  let componentHeight: Nullable<number> = null;
+  let windowHeight = 0;
+  let windowWidth = 0;
+  let dimension: "height" | "width";
+  let shouldIncrease: boolean;
+
   $: randomIncrease = shouldIncrease ? getRandomInt(1, 100) : null;
-  $: console.log("randomIncrease:", randomIncrease);
   $: randomComponent = getRandomComponentWithin(
-    innerWidth,
-    innerHeight,
+    windowWidth,
+    windowHeight,
     currentNumber,
   );
 
   const moveToQuestion = () => {
     if (currentNumber === maxQuestions) goto("/");
 
+    shouldIncrease = !!getRandomInt(0, 1);
+    dimension = getRandomInt(0, 1) ? "width" : "height";
+
+    const componentSize =
+      dimension === "width" ? componentWidth : componentHeight;
     isMemorizing = false;
     data = { ...data, original: componentSize };
-
-    shouldIncrease = !!getRandomInt(0, 1);
   };
 
   const answerQuestion = (isChanged: boolean) => () => {
-    isMemorizing = true;
+    const componentSize =
+      dimension === "width" ? componentWidth : componentHeight;
     const isSame = componentSize === data.original;
-    // randomNumberComponent = getRandomInt(0, 1);
+
     data = {
       ...data,
       changed: componentSize,
       isCorrect: isSame === !isChanged,
     };
     console.log("save data:", data);
+
     currentNumber += 1;
     data = defaultData;
+    isMemorizing = true;
+  };
+
+  const updateSize = (width: number, height: number) => {
+    componentWidth = width;
+    componentHeight = height;
   };
 </script>
 
-<svelte:window bind:innerHeight bind:innerWidth />
+<svelte:window bind:innerHeight={windowHeight} bind:innerWidth={windowWidth} />
 
 <div class="w-full h-full flex flex-col justify-center items-center">
   <div>
     {#if randomComponent}
       <svelte:component
         this={randomComponent.component}
-        bind:size={componentSize}
         {...randomComponent.props}
+        {dimension}
         {isMemorizing}
         {randomIncrease}
+        changeSize={updateSize}
       />
     {/if}
   </div>
@@ -71,7 +85,7 @@
 <!-- Survey -->
 <div class="w-full gap-[2rem] flex items-center flex-col py-[2rem]">
   <h1 class="text-lg font-bold">
-    {isMemorizing ? "Try to remember this" : "Did the width  change?"}
+    {isMemorizing ? "Try to remember this" : `Did the ${dimension} change?`}
   </h1>
 
   <div class="flex gap-[2rem]">
