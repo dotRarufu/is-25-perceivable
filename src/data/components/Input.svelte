@@ -1,12 +1,37 @@
 <script lang="ts">
-  export let variant: "xs" | "sm" | "md" = "md";
-  export let size: number | null = null;
+  type InputVariants = "xs" | "sm" | "md";
 
-  $: console.log("input size:", size);
+  export let variant: InputVariants;
+  export let randomIncrease: number | null;
+  export let dimension: "width" | "height" | null;
+
+  export let clientWidth: number | null = null;
+  export let clientHeight: number | null = null;
+
+  let width = "";
+  let height = "";
+
+  $: {
+    if (!width && !height && randomIncrease && dimension) {
+      const size = dimension === "width" ? clientWidth : clientHeight;
+      if (size !== null) {
+        const increase = size * (randomIncrease / 100);
+        const newSize = size + increase;
+
+        // This does not work because w-[...] class is not generated at runtime, only when tailwind compiles
+        // width = `w-[${newWidth}px]`;
+
+        width = dimension === "width" ? `${newSize}px` : " ";
+        height = dimension === "height" ? `${newSize}px` : " ";
+      }
+    }
+  }
 </script>
 
-<div bind:clientHeight={size}>
+<div bind:offsetWidth={clientWidth} bind:offsetHeight={clientHeight}>
   <input
+    style:width
+    style:height
     type="text"
     class="input input-bordered input-primary"
     class:input-sm={variant === "sm"}

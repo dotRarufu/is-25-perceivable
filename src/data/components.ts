@@ -33,8 +33,8 @@ export const inputData: UIComponent = {
   variants: [
     {
       class: "xs",
-      width: [320, 320],
       height: [24, 31],
+      width: [320, 320],
       component: () => ({ component: Input, props: { variant: "xs" } }),
     },
     {

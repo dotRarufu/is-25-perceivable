@@ -15,14 +15,19 @@ export const getRandomComponentWithin = (
   // TODO: currentNumber should affect returned components
   currentNumber: number,
 ) => {
-  const filteredComponents = [components[0]]
+  const filteredComponents = components
     .filter((c) => {
       const qualifiedVariants = c.variants.filter((v) => {
         const widthLargest = sortNumbers(v.width, "desc")[0];
         const heightLargest = sortNumbers(v.height, "desc")[0];
 
         // Within screen
-        return widthLargest < screenWidth && heightLargest < screenHeight;
+        // Accomodate even if random increase is 100%
+        const accomodateWidth = screenWidth / 2;
+        const accomodateHeight = screenWidth / 2;
+        return (
+          widthLargest < accomodateWidth && heightLargest < accomodateHeight
+        );
       });
 
       if (qualifiedVariants.length === 0) return false;
@@ -33,8 +38,13 @@ export const getRandomComponentWithin = (
       const qualifiedVariants = c.variants.filter((v) => {
         const widthLargest = sortNumbers(v.width, "desc")[0];
         const heightLargest = sortNumbers(v.height, "desc")[0];
+        console.log("widthLargest:", widthLargest);
 
-        return widthLargest < screenWidth && heightLargest < screenHeight;
+        const accomodateWidth = screenWidth / 2;
+        const accomodateHeight = screenWidth / 2;
+        return (
+          widthLargest < accomodateWidth && heightLargest < accomodateHeight
+        );
       });
 
       return { ...c, variants: qualifiedVariants };
