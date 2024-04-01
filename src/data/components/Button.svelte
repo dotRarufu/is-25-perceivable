@@ -2,35 +2,25 @@
   type ButtonVariants = "xs" | "sm" | "md";
 
   export let variant: ButtonVariants;
-  export let randomIncrease: number;
-  export let isMemorizing: boolean;
-  export let dimension: "width" | "height";
+  export let randomIncrease: number | null;
+  export let dimension: "width" | "height" | null;
   export let changeSize: (w: number, h: number) => void;
 
-  let clientWidth: number;
-  let clientHeight: number;
+  let clientWidth: number | null = null;
+  let clientHeight: number | null = null;
 
   let width = "";
   let height = "";
 
   $: {
-    if (isMemorizing) {
-      width = "";
-      height = "";
-    }
-  }
-
-  $: {
     if (clientHeight && clientWidth) {
-      console.log("update:", clientWidth, clientHeight);
       changeSize(clientWidth, clientHeight);
     }
   }
 
   $: {
-    if (!isMemorizing && !width && !height) {
+    if (!width && !height && randomIncrease && dimension) {
       const size = dimension === "width" ? clientWidth : clientHeight;
-
       if (size !== null) {
         const increase = size * (randomIncrease / 100);
         const newSize = size + increase;
