@@ -26,6 +26,14 @@
     $viewport.height,
     $number,
   );
+
+  $: if ($viewport.width > 0 && $viewport.height > 0) {
+    // todo: apply debounce
+    console.log("window is resized, re-selecting component");
+    showLoader();
+    reset();
+  }
+
   $: console.log("component:", componentWidth, componentHeight);
   $: if ($number === maxQuestions) goto("/");
 
