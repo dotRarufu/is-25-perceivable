@@ -1,4 +1,6 @@
 <script lang="ts">
+  import type { Nullable } from "../../types/utils";
+
   type InputVariants = "xs" | "sm" | "md";
 
   export let variant: InputVariants;
@@ -7,6 +9,13 @@
 
   export let clientWidth: number | null = null;
   export let clientHeight: number | null = null;
+
+  let offsetHeight: Nullable<number> = null;
+  let offsetWidth: Nullable<number> = null;
+
+  // One way binding for offsetWidth, offsetHeight
+  $: clientWidth = offsetWidth;
+  $: clientHeight = offsetHeight;
 
   let width = "";
   let height = "";
@@ -28,7 +37,7 @@
   }
 </script>
 
-<div bind:offsetWidth={clientWidth} bind:offsetHeight={clientHeight}>
+<div bind:offsetWidth bind:offsetHeight>
   <input
     style:width
     style:height

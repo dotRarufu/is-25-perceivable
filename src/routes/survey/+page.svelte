@@ -26,7 +26,7 @@
     $viewport.height,
     $number,
   );
-
+  $: console.log("component:", componentWidth, componentHeight);
   $: if ($number === maxQuestions) goto("/");
 
   onMount(() => showLoader());
@@ -55,19 +55,30 @@
   };
 
   const answerQuestion = (isChanged: boolean) => () => {
+    showLoader();
+
     const componentSize =
       dimension === "width" ? componentWidth : componentHeight;
 
     if (componentSize === null) throw Error("Component size is null");
+    console.log("dimension:", dimension);
 
     const isCorrect = (componentSize === $data.original) === !isChanged;
 
     data.setChanged(componentSize, isCorrect);
 
     $number += 1;
-    data.clear();
+
+    reset();
+  };
+
+  const reset = () => {
     isMemorizing = true;
-    showLoader();
+    data.clear();
+    componentHeight = null;
+    componentWidth = null;
+    randomIncrease = null;
+    dimension = null;
   };
 
   const surveyContext = writable({

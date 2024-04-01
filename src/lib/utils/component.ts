@@ -1,4 +1,5 @@
 import { components } from "../../data/components";
+import type { UIComponentVariant } from "../../types/UIComponent";
 import { getRandomInt, sortNumbers } from "./math";
 
 export const getRandomComponent = () => {
@@ -15,37 +16,27 @@ export const getRandomComponentWithin = (
   // TODO: currentNumber should affect returned components
   currentNumber: number,
 ) => {
+  const withinViewport = (v: UIComponentVariant) => {
+    const widthLargest = sortNumbers(v.width, "desc")[0];
+    const heightLargest = sortNumbers(v.height, "desc")[0];
+
+    // Within screen
+    // Accomodate even if random increase is 100%
+    const accomodateWidth = screenWidth / 2;
+    const accomodateHeight = screenWidth / 2;
+    return widthLargest < accomodateWidth && heightLargest < accomodateHeight;
+  };
+
   const filteredComponents = components
     .filter((c) => {
-      const qualifiedVariants = c.variants.filter((v) => {
-        const widthLargest = sortNumbers(v.width, "desc")[0];
-        const heightLargest = sortNumbers(v.height, "desc")[0];
+      const qualifiedComponents = c.variants.filter(withinViewport);
 
-        // Within screen
-        // Accomodate even if random increase is 100%
-        const accomodateWidth = screenWidth / 2;
-        const accomodateHeight = screenWidth / 2;
-        return (
-          widthLargest < accomodateWidth && heightLargest < accomodateHeight
-        );
-      });
-
-      if (qualifiedVariants.length === 0) return false;
+      if (qualifiedComponents.length === 0) return false;
 
       return true;
     })
     .map((c) => {
-      const qualifiedVariants = c.variants.filter((v) => {
-        const widthLargest = sortNumbers(v.width, "desc")[0];
-        const heightLargest = sortNumbers(v.height, "desc")[0];
-        console.log("widthLargest:", widthLargest);
-
-        const accomodateWidth = screenWidth / 2;
-        const accomodateHeight = screenWidth / 2;
-        return (
-          widthLargest < accomodateWidth && heightLargest < accomodateHeight
-        );
-      });
+      const qualifiedVariants = c.variants.filter((v) => withinViewport);
 
       return { ...c, variants: qualifiedVariants };
     });
