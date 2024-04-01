@@ -17,3 +17,16 @@ export const sortNumbers = (
     throw new Error("Invalid direction. Use 'asc' or 'desc'.");
   }
 };
+
+export const getRandomValueOrNull = () => {
+  const shouldIncrease = !!getRandomInt(0, 1);
+
+  return shouldIncrease ? getRandomInt(1, 100) : null;
+};
+
+export const getRandomFrom = <T>(...params: T[]): T => {
+  if (params.length === 0) throw Error("No params passed");
+
+  const randomIndex = getRandomInt(0, params.length - 1);
+  return params[randomIndex];
+};

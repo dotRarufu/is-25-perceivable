@@ -1,40 +1,33 @@
 <script lang="ts">
-  import { getRandomInt } from "$lib/utils/math";
+  import { getRandomFrom, getRandomValueOrNull } from "$lib/utils/math";
   import { goto } from "$app/navigation";
   import { getRandomComponentWithin } from "$lib/utils/component";
   import Loading from "../../data/components/Loading.svelte";
   import { onMount, setContext } from "svelte";
   import type { Nullable } from "../../types/utils";
-  import type { Data } from "../../types/data";
+  import { data } from "$lib/stores/data";
+  import { number } from "$lib/stores/number";
   import Survey from "$lib/components/Survey.svelte";
   import { writable } from "svelte/store";
+  import { viewport } from "$lib/stores/window";
 
-  const defaultData: Data = {
-    original: null,
-    changed: null,
-    isCorrect: null,
-  };
   const maxQuestions = 5;
   const gapSeconds = 2000;
 
-  let data: Data = defaultData;
-  let currentNumber = 1;
   let isMemorizing = true;
   let componentWidth: Nullable<number> = null;
   let componentHeight: Nullable<number> = null;
-  let windowHeight = 0;
-  let windowWidth = 0;
   let dimension: Nullable<"height" | "width"> = null;
   let isLoaderVisible = false;
   let randomIncrease: Nullable<number> = null;
 
   $: randomComponent = getRandomComponentWithin(
-    windowWidth,
-    windowHeight,
-    currentNumber,
+    $viewport.width,
+    $viewport.height,
+    $number,
   );
 
-  $: if (currentNumber === maxQuestions) goto("/");
+  $: if ($number === maxQuestions) goto("/");
 
   onMount(() => showLoader());
 
@@ -47,33 +40,32 @@
 
   const moveToQuestion = () => {
     showLoader();
-    console.log("move to question");
-    const randomDimension = getRandomInt(0, 1) ? "width" : "height";
-    const shouldIncrease = !!getRandomInt(0, 1);
-    const componentSize =
-      randomDimension === "width" ? componentWidth : componentHeight;
 
-    dimension = randomDimension;
-    randomIncrease = shouldIncrease ? getRandomInt(1, 100) : null;
+    dimension = getRandomFrom("width", "height");
+
+    const componentSize =
+      dimension === "width" ? componentWidth : componentHeight;
+
+    if (componentSize === null) throw Error("Component size is null");
+
+    randomIncrease = getRandomValueOrNull();
 
     isMemorizing = false;
-    data = { ...data, original: componentSize };
+    data.setOriginal(componentSize);
   };
 
   const answerQuestion = (isChanged: boolean) => () => {
     const componentSize =
       dimension === "width" ? componentWidth : componentHeight;
-    const isCorrect = (componentSize === data.original) === !isChanged;
 
-    const save = {
-      ...data,
-      changed: componentSize,
-      isCorrect,
-    };
-    console.log("save data:", save);
+    if (componentSize === null) throw Error("Component size is null");
 
-    currentNumber += 1;
-    data = defaultData;
+    const isCorrect = (componentSize === $data.original) === !isChanged;
+
+    data.setChanged(componentSize, isCorrect);
+
+    $number += 1;
+    data.clear();
     isMemorizing = true;
     showLoader();
   };
@@ -93,10 +85,9 @@
     moveToQuestion,
   };
 
+  // pass this as prop instead
   setContext("survey", surveyContext);
 </script>
-
-<svelte:window bind:innerHeight={windowHeight} bind:innerWidth={windowWidth} />
 
 {#if isLoaderVisible}
   <div class="h-full flex items-center">
