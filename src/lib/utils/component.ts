@@ -40,6 +40,7 @@ export const getRandomComponentWithin = (
       return { ...c, variants: qualifiedVariants };
     });
 
+  // Todo: should throw an error instead
   if (filteredComponents.length === 0) return null;
 
   const componentIndex = getRandomInt(0, filteredComponents.length - 1);
