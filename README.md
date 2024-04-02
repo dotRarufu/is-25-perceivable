@@ -2,7 +2,7 @@
 
 a survey for checking if 25% increase in change is actually perceivable
 
-![](docs/centroid.png)
+![](docs/summary.png)
 
 #### Inspiration
 
