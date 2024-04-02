@@ -1,38 +1,25 @@
-# create-svelte
+# Is 25 Perceivable?
 
-Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/main/packages/create-svelte).
+a survey for checking if 25% increase in change is actually perceivable
 
-## Creating a project
+![](docs/centroid.png)
 
-If you're seeing this, you've probably already done this step. Congrats!
+#### Inspiration
 
-```bash
-# create a new project in the current directory
-npm create svelte@latest
+If you have read Refactoring UI by Adam Wathan and Steve Schoger, you might have a question, why 25%? In "Establish a spacing and sizing system" section, the book suggest that for a change to be perceivable, it should be around 25%, in other words, it should either increase or decrease by around 25% of the original size. The book did not explain why around 25% specifically.
 
-# create a new project in my-app
-npm create svelte@latest my-app
-```
+#### Goal
 
-## Developing
+This app aims to gather data from internet users to get the average score, and tell if 25% is really the value we need.
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+#### How does it work?
 
-```bash
-npm run dev
+It's simple, users just look at the design's initial size, then after x seconds, the design will be resized by a random percentage. Then their score would be sent to the database, to move the centroid.
 
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
+#### But isn't perceivable change magnified by the original size?
 
-## Building
+Yes, that's correct. This is why a user's score is recorded with the element's original size as well. This way, we can see the perceivable change values for different element's original size.
 
-To create a production version of your app:
+#### Motivation
 
-```bash
-npm run build
-```
-
-You can preview the production build with `npm run preview`.
-
-> To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.
+I don't expect this project to be a success, but I hope it does. I just thought of this as cool. I guess I just can't get over from my [previous project](https://github.com/dotRarufu/spacify) (related with this project)
