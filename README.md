@@ -2,8 +2,6 @@
 
 a survey for checking if 25% increase in change is actually perceivable
 
-![](docs/summary.png)
-
 #### Inspiration
 
 If you have read Refactoring UI by Adam Wathan and Steve Schoger, you might have a question, why 25%? In "Establish a spacing and sizing system" section, the book suggest that for a change to be perceivable, it should be around 25%, in other words, it should either increase or decrease by around 25% of the original size. The book did not explain why around 25% specifically.
