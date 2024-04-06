@@ -4,7 +4,7 @@
 @tailwind utilities;
 
 @layer base {
-  html {
-    @apply leading-[150%];
+  body {
+    @apply leading-[150%] bg-white font-poppins;
   }
 }
